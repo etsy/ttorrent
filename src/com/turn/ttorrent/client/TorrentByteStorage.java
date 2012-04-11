@@ -69,6 +69,7 @@ public class TorrentByteStorage {
 		List<FileOffset> fileOffsets = select(offset, length);
 		int total = 0;
 		for (FileOffset fileOffset : fileOffsets) {
+			if (fileOffset.length == 0) continue; // don't read from zero byte files
 			total += fileOffset.file.read(buffer, fileOffset.offset);
 		}
 		buffer.clear();
@@ -87,6 +88,7 @@ public class TorrentByteStorage {
 		// get all the bytes
 		byte[] bytes = block.array();
 		for (FileOffset fileOffset : fileOffsets) {
+			if (fileOffset.length == 0) continue; // don't write to zero byte files
 			// create a smaller buffers to write
 			ByteBuffer data = ByteBuffer.allocate(new Long(fileOffset.length).intValue()); // too short?
 			// put the only the data for this file
