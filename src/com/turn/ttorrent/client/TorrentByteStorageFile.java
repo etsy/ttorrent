@@ -94,13 +94,20 @@ public class TorrentByteStorageFile {
 
 		if (seeder) {
 			this.raf = new RandomAccessFile(this.current, "r");
+			if (this.size != this.raf.length()) {
+				logger.error("Seeder file at {} has incorrect length {} != {}", new Object[] {
+							this.target.getAbsolutePath(), this.size, this.raf.length()
+					});
+				throw new IOException("Seeder file has incorrect length: " +
+					this.target.getAbsolutePath());
+			}
 		} else {
 			this.raf = new RandomAccessFile(this.current, "rw");
+			// Set the file length to the appropriate size, eventually truncating
+			// or extending the file if it already exists with a different size.
+			this.raf.setLength(this.size);
 		}
 
-		// Set the file length to the appropriate size, eventually truncating
-		// or extending the file if it already exists with a different size.
-		this.raf.setLength(this.size);
 
 		this.channel = raf.getChannel();
 		logger.debug("Initialized torrent byte storage at " +
