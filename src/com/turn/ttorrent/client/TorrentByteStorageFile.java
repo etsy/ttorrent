@@ -92,7 +92,11 @@ public class TorrentByteStorageFile {
 			this.current = this.target;
 		}
 
-		this.raf = new RandomAccessFile(this.current, "rw");
+		if (seeder) {
+			this.raf = new RandomAccessFile(this.current, "r");
+		} else {
+			this.raf = new RandomAccessFile(this.current, "rw");
+		}
 
 		// Set the file length to the appropriate size, eventually truncating
 		// or extending the file if it already exists with a different size.
