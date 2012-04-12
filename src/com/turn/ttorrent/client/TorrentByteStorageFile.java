@@ -58,12 +58,25 @@ public class TorrentByteStorageFile {
 	private FileChannel channel;
 	private long size;
 
-	public TorrentByteStorageFile(File file, long size) throws IOException {
+	public TorrentByteStorageFile(File file, long size, boolean seeder) throws IOException {
 		this.target = file;
 		this.size = size;
 
 		this.partial = new File(this.target.getAbsolutePath() +
 			TorrentByteStorageFile.PARTIAL_FILE_NAME_SUFFIX);
+
+		// ensure the seeder has all of the real files!
+		if (this.partial.exists() && seeder) {
+			logger.warn("Partial download found at " +
+				this.partial.getAbsolutePath() + ", REMOVING!!");
+			this.partial.delete();
+		}
+		if (!this.target.exists() && seeder) {
+			logger.error("Seeder missing file at " +
+				this.target.getAbsolutePath() + ". The seeder must have all files!!");
+			throw new IOException("Seeder missing file at " +
+				this.target.getAbsolutePath());
+		}
 
 		if (this.partial.exists()) {
 			logger.info("Partial download found at " +
