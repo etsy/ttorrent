@@ -1,4 +1,3 @@
-
 package com.turn.ttorrent.common;
 
 import java.util.ArrayList;
@@ -183,7 +182,7 @@ public class DigestPool {
 
 	public String getHashes() throws InterruptedException, ExecutionException {
 		this.executor.shutdown();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (Map.Entry<Integer,String> hash: hashes.entrySet()) {
 			sb.append(hash.getValue());
 		}
